@@ -1,1 +1,2 @@
-# B5921263X
+ - npm install
+ - npm i -S react-google-maps
