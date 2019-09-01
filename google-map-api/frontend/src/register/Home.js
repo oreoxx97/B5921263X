@@ -22,27 +22,6 @@ function degreesToRadians(degrees) {
     return degrees * Math.PI / 180;
 }
 
-function outputdata(lat,lng,radius) {
-   
-    var urlx = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${Number(lat)},${Number(lng)}&radius=${Number(radius)}&key=AIzaSyB6Q90sn5X-YQ6yZo5WlSSDuD8xfMMazuE`
-    var dataArray = []
-    var proxy_url = 'https://cors-anywhere.herokuapp.com/';
-    var array = []
-    fetch(`${proxy_url}${urlx}`)
-        .then((response) => response.json())
-        .then((data) => {
-            data.results.map((x,i) => {
-                dataArray.push(x)
-            }); 
-           
-        }
-        ); 
-       
-        array = dataArray
-       
-
-    return array;
-}
 export default class Home extends Component {
     emptyItem = {
         lat: 18.7717874,
@@ -61,11 +40,12 @@ export default class Home extends Component {
         birthday: ''
     }
 
-    emptyIput = {
-        name: '',
-        distance: ''
+    item={
+        latselectx:0,
+         lngselectx:0,
+         name:''
     }
-
+   
     constructor(props) {
         super(props);
         this.state = {
@@ -76,18 +56,20 @@ export default class Home extends Component {
             setItem: this.emptyItem,
             datalist: [],
             isOpen: false,
-            datainsert: [],
-            memberSet: false,
             changelat: false,
             changelng: false,
             input: false,
-            checkinput: false,
             member: this.emptyMember,
-            inputx: this.emptyIput
+            id:[],
+            select :false,
+            selectlist :this.item,
+            numberx:null,
+           
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
+
     async componentDidMount() {
         console.log('  componentDidMount Check DATA LIST')
         var urlx = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latx},${this.state.lngx}&radius=${this.state.radiusx}&key=AIzaSyB6Q90sn5X-YQ6yZo5WlSSDuD8xfMMazuE`
@@ -128,7 +110,7 @@ export default class Home extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        const { setItem, change, changelat, changelng } = this.state;
+        const { setItem, changelat, changelng } = this.state;
         const Checklat = setItem.lat
         const Checklng = setItem.lng
         var lat = false;
@@ -156,13 +138,13 @@ export default class Home extends Component {
 
         console.log("SUBMIT", this.state.isOpen)
         
-        this.setState({datainsert : outputdata(setItem.lat , setItem.lng ,setItem.radius)})
+       
        
         
     }
 
     calculateDistance(lat1, lon1, lat2, lon2, i) {
-        var dis = []
+       
         //  console.log(lat1 , lon1 , lat2 , lon2)
         var earthRadiusKm = 6371;
         var dLat = degreesToRadians(lat2 - lat1);
@@ -188,7 +170,7 @@ export default class Home extends Component {
 
     setDatalist() {
         console.log('xx')
-        const { setItem, latx, lngx, radiusx, zoomx, datalist, member, memberSet, input, inputx, checkinput ,datainsert } = this.state;
+        const { setItem, radiusx} = this.state;
         console.log('Check DATA LIST')
        
 
@@ -207,6 +189,7 @@ export default class Home extends Component {
             console.log("dataArray",dataArray)
         this.setState({ isOpen: false })
         this.setState({ input: true })
+
         if (Number(radiusx) < 5000) {
             this.setState({ zoomx: 13.5 })
         }
@@ -223,70 +206,82 @@ export default class Home extends Component {
         }
     }
 
-    async  insert() {
-        const { setItem, latx, lngx, radiusx, zoomx, datalist, member, memberSet, input, inputx, checkinput ,datainsert} = this.state;
-        console.log('yy' ,datainsert)
-        
-         //console.log(datalist)
-        // const data = {}
-        // const array = []
-        // var distance = 0;
-        // var name = '';
-        // datalist.map((x, i) => {
-        //     name = String(x.name)
-        //     distance = this.calculateDistance(Number(setItem.lat), Number(setItem.lng), x.geometry.location.lat, x.geometry.location.lng)
-        //     data[i] = { name, distance }
-        //     array.push(data[i])
-        // })
-        // this.setState({inputx : array})
-
-        // console.log(array)
-        // await fetch(`http://localhost:8080/api/insertx`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Accept': 'application/json',
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify(array[0]),
-        // });
-
+   
+    
+    selectList(e) {
+        var number =0;
+        const {id,numberx}=this.state
+        console.log('x')
+        console.log(e.currentTarget.dataset.id)
+        number = Number(e.currentTarget.dataset.id);
+        console.log(number)
+        //console.log(this.state.datalist[number])
+        this.setState({ id : this.state.datalist[number]})
+        this.setState({select : true})
+        this.setState({numberx : number})
+        console.log(id)
 
     }
 
-
-
+    setLATandLNG(latselectx , lngselectx , name){
+        console.log('a' , latselectx , lngselectx)
+        var array = []
+        array = { latselectx , lngselectx , name }
+        console.log(array)
+        this.setState({selectlist : array})
+        this.setState({select : false})
+    }
+    
+    Array
 
 
     render() {
 
         const MapWrapped = withScriptjs(withGoogleMap(Mapview));
         const url = `https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyB6Q90sn5X-YQ6yZo5WlSSDuD8xfMMazuE`
-        const { setItem, latx, lngx, radiusx, zoomx, datalist, member, memberSet, input, inputx, checkinput ,datainsert} = this.state;
-       // console.log("member", member)
-
-          console.log("render", this.state.isOpen)
-         if (this.state.isOpen == true) {
-             this.setDatalist()
-             this.insert()
-         }
-         console.log(input)
-         console.log(checkinput)
+        const { setItem, latx, lngx, radiusx, zoomx, datalist, member,  input ,id ,selectlist ,numberx }  = this.state;
         
 
+        console.log("render", this.state.isOpen)
+         if (this.state.isOpen == true) {
+             this.setDatalist()
+            
+         }
+        
+        
+         
+         console.log("select", this.state.select)
+         const a = 0;
+         if(this.state.select == true){
+            console.log("id",id)
+            //console.log(id.geometry.location.lat ,id.geometry.location.lng )
+            const latselectx = Number(id.geometry.location.lat);
+            const lngselectx = Number(id.geometry.location.lng);
+            const name = String(id.name)
+            console.log("Select" , latselectx , lngselectx ,name)
+            this.setLATandLNG(latselectx , lngselectx ,name);
+         }
+         
 
 
         const lat = Number(latx);
         const lng = Number(lngx);
         const radius = Number(radiusx)
         const zoom = Number(zoomx)
-
-         
+        
+      
 
 
         
-         console.log(this.props.match.params.id)
-         console.log("DataList", datalist)
-         console.log("datainsert", datainsert)
+        console.log("selectlist", selectlist , numberx)
+        console.log("DataList", datalist)
+
+        
+        const selectLat = selectlist.latselectx;
+        const selectLng = selectlist.lngselectx
+        const nameselect = selectlist.name
+        console.log(selectLat,selectLng,nameselect)
+        
     return (
             <div className="div">
                 <Form onSubmit={this.handleSubmit}>
@@ -329,7 +324,9 @@ export default class Home extends Component {
                         containerElement={<div style={{ height: `100%` }} />}
                         mapElement={<div style={{ height: `100%` }} />}
                         lat={lat} lng={lng} radius={radius} zoom={zoom}
-                        input={inputx} data={datalist} input={input} idmember={this.props.match.params.id}
+                        data={datalist} input={input} idmember={this.props.match.params.id}
+                        selectLat={selectLat} selectLng={selectLng} numberx={numberx} selecta={this.state.select}
+                        nameselect={nameselect}
                     >
                     </MapWrapped>
                 </div>
@@ -340,15 +337,16 @@ export default class Home extends Component {
                             <div>
                                 {
                                     this.state.datalist.map((park, i) => (
-                                        <li className="cardlist"  >
+                                        <li className="cardlist" onClick={this.selectList.bind(this)} data-id={i}>
                                             <div className="fronts">
-                                                <span>{i + 1}. </span>
+                                                <span key={park.id}>{i + 1}. </span>
                                                 {park.name}
                                             </div>
                                             <div className="front">
                                                 <span>ระยะทางจากจุดค้นหา</span>
                                                 : {this.calculateDistance(Number(setItem.lat), Number(setItem.lng), park.geometry.location.lat, park.geometry.location.lng)}
                                                 <span> KM</span>
+
                                             </div>
                                         </li>
                                     ))

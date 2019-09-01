@@ -17,13 +17,14 @@ function degreesToRadians(degrees) {
 
 export default class mapview extends Component {
 
+
+
     constructor(props) {
         super(props);
         this.state = {
             data: [],
             position: null,
             showInfoIndex: null,
-            check: false
         };
     }
 
@@ -45,32 +46,26 @@ export default class mapview extends Component {
             );
 
 
+
+
     }
 
-    handleToggleOpen(lat, lng) {
-        this.setState({
-            position: {
-                lat: lat,
-                lng: lng
-            }
-        })
-
-        //  console.log(this.state.position)
+    handleToggleOpen(i) {
+        this.setState({ showInfoIndex: i })
     }
+
+
 
     handleToggleClose = () => {
         this.setState({
             showInfoIndex: null
         });
-        //  console.log(this.state.position)
+
     }
 
-    showInfo(a) {
-        this.setState({ showInfoIndex: a })
-        // console.log(this.state.showInfoIndex)
-    }
+
     calculateDistance(lat1, lon1, lat2, lon2, i) {
-        var dis = []
+
         //  console.log(lat1 , lon1 , lat2 , lon2)
         var earthRadiusKm = 6371;
         var dLat = degreesToRadians(lat2 - lat1);
@@ -94,7 +89,7 @@ export default class mapview extends Component {
 
     }
 
-    x() {
+    insertdata() {
         console.log("x")
         if (this.state.data.length != 0) {
             console.log("render", this.props.data)
@@ -121,49 +116,74 @@ export default class mapview extends Component {
                 })
 
             }
-            
+
 
 
         }
 
     }
 
+
+    selectListshowMap() {
+        if (this.props.selectLat != 0) {
+            var x = []
+            console.log(this.state.data[this.props.numberx])
+            {
+                x = this.state.data[this.props.numberx]
+                console.log(x)
+            }
+
+            return (<Marker
+                position={{
+                    lat: this.props.selectLat,
+                    lng: this.props.selectLng
+                }}
+            >
+                <InfoWindow
+                >
+                    <h1 style={{ fontSize: "12px" }}> {this.props.nameselect} </h1>
+                </InfoWindow>
+
+            </Marker>)
+        }
+
+    }
+
+
+
     render() {
         const mapStyles = {
             width: '100%',
             height: '100%',
         };
+        console.log(this.props.selectLat)
 
-        const { check } = this.state
+
         if (this.props.input == true) {
-            this.x()
+            this.insertdata()
         }
 
-
-        // {
-        //     this.state.data.map((p, i) => (
-        //         console.log(p.geometry, i)
-
-        //     ))
-        // }
-
+        //  console.log("Mark", this.state.mark)
+        if (this.props.selecta == false) {
+            this.selectListshowMap();
+        }
 
         var im = 'https://sv1.picz.in.th/images/2019/08/31/ZA9npP.png'
 
         console.log("Mapview", this.state.data)
         console.log(this.props.input)
         console.log(this.props.idmember)
+        console.log(this.props.numberx)
+        console.log(this.props.selecta)
+        console.log(this.props.nameselect)
         return (
             <div>
                 <GoogleMap
                     defaultZoom={this.props.zoom}
                     defaultCenter={{ lat: this.props.lat, lng: this.props.lng }}
                     defaultOptions={{ styles: mapStyles }}
-                    onClick={() => this.x()}
+
                 >
-
-
-
                     <Marker
                         position={{
                             lat: this.props.lat,
@@ -173,6 +193,9 @@ export default class mapview extends Component {
                         icon={im}
 
                     >
+
+                        {this.selectListshowMap()}
+
 
                     </Marker>
 
@@ -190,7 +213,7 @@ export default class mapview extends Component {
 
 
 
-                            onClick={() => this.showInfo(i)}
+                            onClick={() => this.handleToggleOpen(i)}
 
 
                         >
