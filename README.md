@@ -1,3 +1,6 @@
  - npm install
  - or
  - npm i -S react-google-maps
+ - npm install @material-ui/core
+ - npm install --save bootstrap
+ - npm install --save reactstrap
