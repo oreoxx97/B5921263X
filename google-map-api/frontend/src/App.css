@@ -1,0 +1,128 @@
+.container, .container-fluid {
+  margin-top: 20px;
+}
+
+li.cardlist {
+  border-bottom: 1px solid #c7cdcf ;
+  margin: 0;
+  padding: 0;
+  list-style-type:none;
+  width:100%;
+}
+
+ul.demo {
+  list-style-type: none;
+  margin: 10px;
+  padding: 0;
+  display: block;
+  bottom: 0;
+  height: 100%;
+ 
+}
+
+.bar{
+  padding: 10px; 
+  background-color:orange;
+  margin: 0px;
+  height: 85px;
+  width: 101%; 
+}
+
+.map{
+  width: 60vw;
+   height: 88vh;
+   display: block;
+  box-sizing: border-box;
+  float: right
+}
+
+.front{
+  font-family:verdana;
+  font-size: 10px
+}
+
+.fronts{
+  font-family:verdana;
+  color:blue;
+}
+
+.div{
+  height: 100%;
+  width: 100%;
+}
+
+#container {
+  background-color:#f1f1f1;
+  width: 40%;
+  overflow:auto;
+  position:absolute;
+  top:85px;
+  bottom:0;
+  height:auto;
+}
+
+#textareacontainer{
+  float:left;
+  height:auto;
+  width:100%;
+}
+
+
+.my-fieldset{
+  border: 2px solid;
+  margin: 30px;
+  color: #6666ee;
+ 
+}
+.login-legend{
+  margin: 50px;
+  width: 115px;
+  color: black;
+}
+
+.legend{
+  margin: 30px;
+  width: 115px;
+  color: black;
+}
+
+.birthday{
+  margin: 30px;
+  
+}
+
+.save{
+  margin: 30px;
+  text-align: right;
+ 
+  
+}
+
+.checkusername{
+  margin: 60px;
+  
+}
+
+.FormGroup{
+  width: 300px;
+  margin: 30px;
+}
+
+
+
+.colors{
+  color: black;
+}
+
+.member{
+  background-color: beige;
+  height: 100%;
+  
+}
+
+.showusername{
+  margin: 25px;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  color: aliceblue;
+  
+}
