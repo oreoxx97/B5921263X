@@ -1,3 +1,3 @@
  - npm install
- or
+ - or
  - npm i -S react-google-maps
