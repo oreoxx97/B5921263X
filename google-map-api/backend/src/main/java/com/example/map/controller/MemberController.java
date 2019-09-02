@@ -59,12 +59,18 @@ class MemberController {
 
     @PostMapping("/insertx/{memberid}")
     Insert createInsert(@Valid @RequestBody Insert Insert,@PathVariable int memberid) throws URISyntaxException {
-        Member id = memberRepository.findById(memberid);
+       
+       
+            Member id = memberRepository.findById(memberid);
+            Insert.setMemberid(id);
+            Insert.setMembername(id.getFirstname());
+            log.info("Request to create Insert: {}", Insert);
+          
+       
+        
 
-        Insert.setMemberid(id);
-        Insert.setMembername(id.getFirstname());
 
-        log.info("Request to create Insert: {}", Insert);
+
         Insert result = insertRepository.save(Insert);
         return result;
     }

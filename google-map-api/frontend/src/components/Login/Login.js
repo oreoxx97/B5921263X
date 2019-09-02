@@ -166,15 +166,15 @@ class Login extends Component {
               </form>
               <form style={{display: 'flex',  justifyContent:'center', alignItems:'center', paddingTop:'15px'}}>
               <FormGroup>
-                  <Button style={{ background: '#000066' }} onClick={() => this.login()}>Login</Button>
+                  <Button color="primary" onClick={() => this.login()}>Login</Button>
               </FormGroup>
               <FormGroup style={{width: '10px'}} ></FormGroup>
               <FormGroup>
-                  <Button style={{ background: '#000066' }} tag={Link} to={"/Members"}>Signup</Button>
+                  <Button color="danger" tag={Link} to={"/Members"}>Signup</Button>
               </FormGroup>
               <FormGroup style={{width: '10px'}} ></FormGroup>
               <FormGroup>
-                  <Button style={{ background: '#000066' }} tag={Link} to={"/home/new"}>Home</Button>
+                  <Button color="success" tag={Link} to={"/home/new"}>Home</Button>
               </FormGroup>
               </form>
             </Container>
