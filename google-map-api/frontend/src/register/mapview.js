@@ -25,13 +25,15 @@ export default class mapview extends Component {
             data: [],
             position: null,
             showInfoIndex: null,
+            insert : false,
+          
         };
     }
 
 
-    componentDidMount() {
+    componentDidMount() {//ดึงข้อมูลเพื่อไปแสดงผล มาร์ค บนแผลที่
         console.log('componentDidMount')
-        var url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.props.lat},${this.props.lng}&radius=${this.props.radius}&key=AIzaSyB6Q90sn5X-YQ6yZo5WlSSDuD8xfMMazuE`
+        var url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${Number(this.props.lat)},${Number(this.props.lng)}&radius=${Number(this.props.radius)}&key=AIzaSyB6Q90sn5X-YQ6yZo5WlSSDuD8xfMMazuE`
         var dataArray = []
         var proxy_url = 'https://cors-anywhere.herokuapp.com/';
 
@@ -42,29 +44,34 @@ export default class mapview extends Component {
                     dataArray.push(x)
                 });
                 this.setState({ data: dataArray })
+              
             }
             );
 
-
-
-
+            if(this.props.checkinput == false){
+                this.setState({insert : true})
+            }
     }
 
-    handleToggleOpen(i) {
+
+  
+    handleToggleOpen(i) { //เช็คการคลิกมาร์คบนแผนที่
         this.setState({ showInfoIndex: i })
     }
 
 
 
-    handleToggleClose = () => {
+    handleToggleClose = () => { //เมื่อคลิกปิดรายการแสดงบนมาร์ค จะทำการเซ็ตค่าใหม่
         this.setState({
             showInfoIndex: null
         });
 
+
+
     }
+  
 
-
-    calculateDistance(lat1, lon1, lat2, lon2, i) {
+    calculateDistance(lat1, lon1, lat2, lon2, i) {//ทำการคำนวณเพื่อนำไปบันทึกข้อมูลให้กับผู้ใช้
 
         //  console.log(lat1 , lon1 , lat2 , lon2)
         var earthRadiusKm = 6371;
@@ -89,62 +96,53 @@ export default class mapview extends Component {
 
     }
 
-    insertdata() {
-        console.log("x")
-        if (this.state.data.length != 0) {
-            console.log("render", this.props.data)
-
-            if (this.props.idmember !== "new") {
-                const data = {}
-                const array = []
-                var distance = 0;
-                var name = '';
-                this.props.data.map((x, i) => {
-                    name = String(x.name)
-                    distance = this.calculateDistance(Number(this.props.lat), Number(this.props.lng), x.geometry.location.lat, x.geometry.location.lng)
-                    data[i] = { name, distance }
-                    console.log(data[i])
+    insertdata() { //บันทึกข้อมูลที่ผู้ใช้ค้นหา 
+        //console.log("x")
+         if (this.state.data.length != 0) {//เช็คว่ามีข้อมูลที่เราค้นหาหรือไม้
+             // console.log("insertdata", this.props.data)
+            if (this.props.idmember !== "new") {//เช็คว่าเมื่อกดค้นหาเเล้ว จะเป็นผู้ใช้หรือไม่
+                //console.log(this.props.lat,this.props.lng,this.props.radius)
+                var latitude = Number(this.props.lat);
+                var longitude = Number(this.props.lng)
+                var radius = Number(this.props.radius)
+                var data = {}
+                data = {longitude ,latitude ,radius }
+                //console.log(data)
                     fetch(`http://localhost:8080/api/insertx/${this.props.idmember}`, {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify(data[i]),
+                        body: JSON.stringify(data),
                     });
-                    array.push(data[i])
-                })
+              
 
-            }
-
-
-
-        }
-
+           }
+         }
     }
 
 
-    selectListshowMap() {
-        if (this.props.selectLat != 0) {
-            var x = []
-            console.log(this.state.data[this.props.numberx])
-            {
-                x = this.state.data[this.props.numberx]
-                console.log(x)
+    selectListshowMap() {//แสดงผล จากการเลือกรายการใน listview ของผู้ใช้
+        if (this.props.selectLat != 0) {//เช็คว่าผู้ใช้ได้ทำการเลือกรายการหรือไม่
+            if(this.props.selectLat != undefined){
+                return (
+                    <Marker
+                        position={{
+                            lat: Number(this.props.selectLat),
+                            lng: Number(this.props.selectLng)
+                        }}
+                    >
+                        <InfoWindow
+                           
+                        >
+                            <h1 style={{ fontSize: "12px" }}> {this.props.nameselect} </h1>
+                        </InfoWindow>
+
+                    </Marker>
+                    )
             }
-
-            return (<Marker
-                position={{
-                    lat: this.props.selectLat,
-                    lng: this.props.selectLng
-                }}
-            >
-                <InfoWindow
-                >
-                    <h1 style={{ fontSize: "12px" }}> {this.props.nameselect} </h1>
-                </InfoWindow>
-
-            </Marker>)
+                
         }
 
     }
@@ -156,67 +154,59 @@ export default class mapview extends Component {
             width: '100%',
             height: '100%',
         };
-        console.log(this.props.selectLat)
+       
 
+        
+        console.log("this.state.check", this.state.check)
+        console.log("this.state.number", this.state.number)
 
-        if (this.props.input == true) {
+        if (this.state.insert == true) {//เช็คว่าผู้ใช้ได้กดค้นหาหรือไม่
             this.insertdata()
-        }
-
-        //  console.log("Mark", this.state.mark)
-        if (this.props.selecta == false) {
-            this.selectListshowMap();
         }
 
         var im = 'https://sv1.picz.in.th/images/2019/08/31/ZA9npP.png'
 
         console.log("Mapview", this.state.data)
-        console.log(this.props.input)
-        console.log(this.props.idmember)
-        console.log(this.props.numberx)
-        console.log(this.props.selecta)
-        console.log(this.props.nameselect)
+         console.log(this.props.selectLat)
+       //  console.log(this.props.input)
+        // console.log(this.props.idmember)
+        // console.log(this.props.numberx)
+        // console.log(this.props.selecta) 
+       // console.log(this.state.insert)
+       // console.log(this.props.checkinput)
+        // console.log(this.props.nameselect)
+        // console.log(this.props.isOpen)
         return (
             <div>
-                <GoogleMap
+               
+                 <GoogleMap
                     defaultZoom={this.props.zoom}
                     defaultCenter={{ lat: this.props.lat, lng: this.props.lng }}
                     defaultOptions={{ styles: mapStyles }}
 
                 >
+                 
                     <Marker
                         position={{
                             lat: this.props.lat,
                             lng: this.props.lng
                         }}
-
                         icon={im}
-
                     >
-
-                        {this.selectListshowMap()}
-
-
                     </Marker>
 
+                    {this.selectListshowMap()}
 
                     {this.state.data.map((park, i) => (
-
                         <Marker
-
                             key={i}
                             position={{
                                 lat: park.geometry.location.lat,
                                 lng: park.geometry.location.lng
-
                             }}
-
-
-
                             onClick={() => this.handleToggleOpen(i)}
-
-
                         >
+                        
                             {(this.state.showInfoIndex == i) &&
                                 <InfoWindow
                                     onCloseClick={this.handleToggleClose}

@@ -22,7 +22,7 @@ ul.demo {
 
 .bar{
   padding: 10px; 
-  background-color:orange;
+  background-color: #77b300;
   margin: 0px;
   height: 85px;
   width: 101%; 
@@ -52,7 +52,7 @@ ul.demo {
 }
 
 #container {
-  background-color:#f1f1f1;
+  background-color:#e6e6e6;
   width: 40%;
   overflow:auto;
   position:absolute;
@@ -126,3 +126,5 @@ ul.demo {
   color: aliceblue;
   
 }
+
+

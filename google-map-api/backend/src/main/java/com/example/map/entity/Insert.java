@@ -28,8 +28,9 @@ public class Insert {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Insert_seq")
     private @NonNull Long id;
 
-    private String  name;
-    private String distance;
+    private String  longitude;
+    private String latitude;
+    private String radius;
    
     @OneToOne(fetch = FetchType.EAGER, targetEntity = Member.class)
 	@JoinColumn(name = "Member_ID", insertable = true)
@@ -56,17 +57,20 @@ public class Insert {
 
     public Long getId(){return id;}
 
-    public void setName(String name){
-        this.name = name;
+    public void setLongitude(String longitude){
+        this.longitude = longitude;
     }
-    public String getName(){return name;}
+    public String getLongitude(){return longitude;}
 
-    public void setDistance(String distance){
-        this.distance = distance;
+    public void setLatitude(String latitude){
+        this.latitude = latitude;
     }
-    public String getDistance(){return distance;}
+    public String getLatitude(){return latitude;}
 
 
-
+    public void setRadius(String radius){
+        this.radius = radius;
+    }
+    public String getRadius(){return radius;}
 	
 }

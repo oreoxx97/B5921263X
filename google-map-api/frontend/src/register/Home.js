@@ -18,7 +18,7 @@ import {
 
 
 
-function degreesToRadians(degrees) {
+function degreesToRadians(degrees) { //function คำนวณระยะทางจากจุด 2 จุด (calculate distance GPS 2 point)
     return degrees * Math.PI / 180;
 }
 
@@ -28,7 +28,7 @@ export default class Home extends Component {
         lng: 98.9742796,
         radius: 10,
         zoom: 13.5
-    };
+    };//set เป็นค่า default / set is the default
 
     emptyMember = {
         username: '',
@@ -38,13 +38,13 @@ export default class Home extends Component {
         lastname: '',
         email: '',
         birthday: ''
-    }
+    } //เก็บข้อมูล user  ที่ login เข้ามา /Stores the user information that is logged in.
 
     item={
-        latselectx:0,
+         latselectx:0,
          lngselectx:0,
          name:''
-    }
+    }//เก็บค่าที่เรา click ตรง listview  เพื่อส่งไปแสดงแผลบน google map /Collect the value that we click on the listview to send to show on google map.
    
     constructor(props) {
         super(props);
@@ -64,15 +64,16 @@ export default class Home extends Component {
             select :false,
             selectlist :this.item,
             numberx:null,
+            checkinput : true,
            
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
 
-    async componentDidMount() {
+    async componentDidMount() {// ดึงข้อมูลจาก ค่า  default ที่เรา set ไว้ /Retrieve data from the default we set
         console.log('  componentDidMount Check DATA LIST')
-        var urlx = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${this.state.latx},${this.state.lngx}&radius=${this.state.radiusx}&key=AIzaSyB6Q90sn5X-YQ6yZo5WlSSDuD8xfMMazuE`
+        var urlx = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${Number(this.state.latx)},${Number(this.state.lngx)}&radius=${Number(this.state.radiusx)}&key=AIzaSyB6Q90sn5X-YQ6yZo5WlSSDuD8xfMMazuE`
         var dataArray = []
         var proxy_url = 'https://cors-anywhere.herokuapp.com/';
 
@@ -86,11 +87,12 @@ export default class Home extends Component {
             }
             );
 
-        if (this.props.match.params.id !== 'new') {
+        if (this.props.match.params.id !== 'new') { //เช็คว่ามีการ เข้าสู่ระบบเข้ามาหรือไม่  ถ้า ใช่จะทำการดึงข้อมูลผู้ใช้ จากฐานข้อมูล
             const member = await (await fetch(`http://localhost:8080/api/findMember/${this.props.match.params.id}`)).json();
             this.setState({ member: member });
             this.setState({ memberSet: true })
         }
+       
     }
 
     handleChange(event) {
@@ -105,6 +107,11 @@ export default class Home extends Component {
         if (item.lng != 98.9742796) {
             this.setState({ changelng: true })
         }
+
+        if(this.state.checkinput == false){
+            this.setState({checkinput : true})
+        }
+
     }
 
 
@@ -117,7 +124,8 @@ export default class Home extends Component {
         var lng = false;
         var radius = false;
 
-        if (changelat == true) {
+        //เช็คว่ามีการเปลี่ยนแปลงค่าลองจิจูด ละติจูดและรัศมีหรือไม่
+        if (changelat == true) { 
             if (Checklat.match(/^[0-9]*\.[0-9]*/) != null) {
                 this.setState({ latx: setItem.lat })
                 lat = true;
@@ -125,25 +133,40 @@ export default class Home extends Component {
         }
         if (changelng == true) {
             if (Checklng.match(/^[0-9]*\.[0-9]*/)) {
-                lng = true;
                 this.setState({ lngx: setItem.lng })
+                lng = true;
             }
+                
         }
         if (1 <= Number(setItem.radius) && Number(setItem.radius) <= 50000) {
-            radius = true;
             this.setState({ radiusx: setItem.radius })
+            console.log("radius")
+            radius = true;
+            
         }
-        this.setState({ isOpen: true })
+
+        var latselectx = 0
+        console.log(lat,lng ,radius)
+        //ถ้ามีการเปลี่ยนแปลงจะทำการค้นหาตามค่าที่ผู้ใช้กรอก
+        // if(lat == true && lng == true && radius == true){
+          
+           
+          
+           
+            this.setState({ isOpen: true })
+            this.setState({ selectlist : 0})
+            this.setState({ checkinput : false})
+            
+       //  }else{
+       //      alert("กรุณากรอกข้อมูลใหม่ให้ถูกต้องและครบถ้วน")
+       // }
         
 
         console.log("SUBMIT", this.state.isOpen)
-        
-       
-       
-        
-    }
+    
+}
 
-    calculateDistance(lat1, lon1, lat2, lon2, i) {
+    calculateDistance(lat1, lon1, lat2, lon2, i) { //การคำนวณหาระยะระหว่างจุด 2 จุด
        
         //  console.log(lat1 , lon1 , lat2 , lon2)
         var earthRadiusKm = 6371;
@@ -159,7 +182,7 @@ export default class Home extends Component {
         var d = earthRadiusKm * c;
         var x = Number(d.toFixed(2));
 
-        if (x == 0) {
+        if (x == 0) { //ถ้าทศนิยม 2 ตำแหน่งเเล้วได้ค่า 0 จะทำการเลื่อนตำแหน่งจุดทศนิยให้อีก 1 ตำแหน่ง
             x = Number(d.toFixed(3));;
 
         }
@@ -168,13 +191,13 @@ export default class Home extends Component {
 
     }
 
-    setDatalist() {
+    setDatalist() { //การดึงข้อมูลเพื่อเอาไปโชว์ใน Listview
         console.log('xx')
-        const { setItem, radiusx} = this.state;
+        const { setItem, radiusx , latx , lngx} = this.state;
         console.log('Check DATA LIST')
        
 
-        var urlx = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${Number(setItem.lat)},${Number(setItem.lng)}&radius=${Number(setItem.radius)}&key=AIzaSyB6Q90sn5X-YQ6yZo5WlSSDuD8xfMMazuE`
+        var urlx = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${Number(latx)},${Number(lngx)}&radius=${Number(radiusx)}&key=AIzaSyB6Q90sn5X-YQ6yZo5WlSSDuD8xfMMazuE`
         var dataArray = []
         var proxy_url = 'https://cors-anywhere.herokuapp.com/';
         fetch(`${proxy_url}${urlx}`)
@@ -189,7 +212,9 @@ export default class Home extends Component {
             console.log("dataArray",dataArray)
         this.setState({ isOpen: false })
         this.setState({ input: true })
+        
 
+        //เช็ครัศมี เพื่อทำการขยายออกสำหรับรัศมีที่กว้าง หรือย่อเข้าสำหรับรัศมีที่เล็ก
         if (Number(radiusx) < 5000) {
             this.setState({ zoomx: 13.5 })
         }
@@ -208,62 +233,60 @@ export default class Home extends Component {
 
    
     
-    selectList(e) {
+    selectList(e) {//ผู้ใช้คลิกตรง listview จะทำการเก็บข้อมูล
         var number =0;
         const {id,numberx}=this.state
-        console.log('x')
-        console.log(e.currentTarget.dataset.id)
+      
+        // console.log(e.currentTarget.dataset.id)
         number = Number(e.currentTarget.dataset.id);
-        console.log(number)
-        //console.log(this.state.datalist[number])
+        //console.log(number)
         this.setState({ id : this.state.datalist[number]})
         this.setState({select : true})
         this.setState({numberx : number})
-        console.log(id)
+        //console.log(id)
 
     }
 
-    setLATandLNG(latselectx , lngselectx , name){
-        console.log('a' , latselectx , lngselectx)
+    setLATandLNG(latselectx , lngselectx , name){//ข้อมูลจากการเลือก listview จะถูกส่งไปแสดงผลบนแผนที่
+        //console.log('a' , latselectx , lngselectx)
         var array = []
         array = { latselectx , lngselectx , name }
-        console.log(array)
+        //console.log(array)
         this.setState({selectlist : array})
         this.setState({select : false})
     }
     
-    Array
+   
 
 
     render() {
 
         const MapWrapped = withScriptjs(withGoogleMap(Mapview));
         const url = `https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyB6Q90sn5X-YQ6yZo5WlSSDuD8xfMMazuE`
-        const { setItem, latx, lngx, radiusx, zoomx, datalist, member,  input ,id ,selectlist ,numberx }  = this.state;
+        const { setItem, latx, lngx, radiusx, zoomx, datalist, member,  input ,id ,selectlist ,numberx ,isOpen}  = this.state;
         
 
         console.log("render", this.state.isOpen)
-         if (this.state.isOpen == true) {
+         if (this.state.isOpen == true) {//เมื่อทำการค้นหาข้อมูลจะถูกส่งเข้าไปค้นหารายการเพื่อนำมาแสดงผลใน listview
              this.setDatalist()
-            
          }
         
         
          
          console.log("select", this.state.select)
-         const a = 0;
-         if(this.state.select == true){
-            console.log("id",id)
+      
+         if(this.state.select == true){//เมื่อเราเลือกรายการใน listview จะนำข้อมูลที่ได้ไปเก็บไว้สำหรับการส่งไปแสดงผลบนแผนที่
+            //console.log("id",id)
             //console.log(id.geometry.location.lat ,id.geometry.location.lng )
             const latselectx = Number(id.geometry.location.lat);
             const lngselectx = Number(id.geometry.location.lng);
             const name = String(id.name)
-            console.log("Select" , latselectx , lngselectx ,name)
+           // console.log("Select" , latselectx , lngselectx ,name)
             this.setLATandLNG(latselectx , lngselectx ,name);
          }
          
 
-
+        
         const lat = Number(latx);
         const lng = Number(lngx);
         const radius = Number(radiusx)
@@ -280,7 +303,7 @@ export default class Home extends Component {
         const selectLat = selectlist.latselectx;
         const selectLng = selectlist.lngselectx
         const nameselect = selectlist.name
-        console.log(selectLat,selectLng,nameselect)
+       // console.log(selectLat,selectLng,nameselect)
         
     return (
             <div className="div">
@@ -304,15 +327,15 @@ export default class Home extends Component {
                             <Input type="number" name="radius" id="radius" value={setItem.radius || ''}
                                 onChange={this.handleChange}
                                 autoComplete="radius" placeholder="รัศมี" />
-                            <InputLabel shrink htmlFor="bootstrap-input">Radius</InputLabel>
+                            <InputLabel shrink htmlFor="bootstrap-input">Radius ( 1-50000 meter)</InputLabel>
                         </FormGroup>
                         <FormGroup style={{ margin: "10px" }}>
-                            <Button color="info" type="submit">ค้นหา</Button>
+                            <Button color="warning" type="submit">ค้นหา</Button>
                         </FormGroup>
                         <form style={{ justifyContent: 'right', alignItems: 'right', paddingLeft: '360pt' }}>
                             <span className="showusername">{member.username}</span>
                             <FormGroup style={{ margin: "5px" }}>
-                                <Button color="success" type="submit" tag={Link} to={"/"} >ออกจากระบบ</Button>
+                                <Button color="danger" type="submit" tag={Link} to={"/"}>ออกจากระบบ</Button>
                             </FormGroup>
                         </form>
                     </div>
@@ -326,7 +349,7 @@ export default class Home extends Component {
                         lat={lat} lng={lng} radius={radius} zoom={zoom}
                         data={datalist} input={input} idmember={this.props.match.params.id}
                         selectLat={selectLat} selectLng={selectLng} numberx={numberx} selecta={this.state.select}
-                        nameselect={nameselect}
+                        nameselect={nameselect} isOpen={isOpen} checkinput={this.state.checkinput}
                     >
                     </MapWrapped>
                 </div>
@@ -337,7 +360,7 @@ export default class Home extends Component {
                             <div>
                                 {
                                     this.state.datalist.map((park, i) => (
-                                        <li className="cardlist" onClick={this.selectList.bind(this)} data-id={i}>
+                                        <li className="cardlist" onClick={this.selectList.bind(this)} data-id={i} key={park.id}>
                                             <div className="fronts">
                                                 <span key={park.id}>{i + 1}. </span>
                                                 {park.name}
