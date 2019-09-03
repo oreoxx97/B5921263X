@@ -100,6 +100,7 @@ export default class mapview extends Component {
         //console.log("x")
          if (this.state.data.length != 0) {//เช็คว่ามีข้อมูลที่เราค้นหาหรือไม้
              // console.log("insertdata", this.props.data)
+             if(this.props.selectLat == undefined){
             if (this.props.idmember !== "new") {//เช็คว่าเมื่อกดค้นหาเเล้ว จะเป็นผู้ใช้หรือไม่
                 //console.log(this.props.lat,this.props.lng,this.props.radius)
                 var latitude = Number(this.props.lat);
@@ -119,6 +120,7 @@ export default class mapview extends Component {
               
 
            }
+        }
          }
     }
 
@@ -172,7 +174,7 @@ export default class mapview extends Component {
         // console.log(this.props.idmember)
         // console.log(this.props.numberx)
         // console.log(this.props.selecta) 
-       // console.log(this.state.insert)
+        console.log(this.state.insert)
        // console.log(this.props.checkinput)
         // console.log(this.props.nameselect)
         // console.log(this.props.isOpen)
